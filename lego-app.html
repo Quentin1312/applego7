@@ -624,16 +624,16 @@ function renderSetRow(set, index) {
   const imgUrl = set.set_img_url || '';
 
   return `
-    <div class="set-row" style="position:relative">
+    <div class="set-row" style="position:relative;padding-right:50px">
       <div class="set-icon" style="background-image:url('${imgUrl}');background-size:contain;background-repeat:no-repeat;background-position:center;"></div>
       <div class="set-info">
         <div class="set-theme">${set.theme_name || 'LEGO'}</div>
         <div class="set-name">${set.name}</div>
         <div class="set-date">${dayOffset} mars · ${set.num_parts} pcs</div>
       </div>
-      <div class="set-price">${price}€</div>
+      <div class="set-price" style="margin-right:10px">${price}€</div>
       <button onclick='toggleFavorite(${JSON.stringify(set).replace(/'/g, "\\'")})'
-              style="position:absolute;top:50%;right:60px;transform:translateY(-50%);background:rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.1);border-radius:50%;width:32px;height:32px;font-size:16px;cursor:pointer;backdrop-filter:blur(10px);transition:transform 0.2s">
+              style="position:absolute;top:50%;right:14px;transform:translateY(-50%);background:rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.1);border-radius:50%;width:32px;height:32px;font-size:16px;cursor:pointer;backdrop-filter:blur(10px);transition:transform 0.2s">
         ${heartIcon}
       </button>
     </div>
@@ -645,15 +645,15 @@ function renderFavRow(set) {
   const imgUrl = set.set_img_url || '';
 
   return `
-    <div class="fav-row" data-set-num="${set.set_num}">
+    <div class="fav-row" data-set-num="${set.set_num}" style="position:relative;padding-right:50px">
       <div class="set-icon" style="background-image:url('${imgUrl}');background-size:contain;background-repeat:no-repeat;background-position:center;"></div>
       <div class="set-info">
         <div class="set-theme">${set.theme_name || 'LEGO'}</div>
         <div class="set-name">${set.name}</div>
         <div class="set-date">${set.year || '2025'} · ${set.num_parts} pcs</div>
       </div>
-      <div class="set-price">${price}€</div>
-      <div class="heart-btn" onclick="removeFav('${set.set_num}')">❤️</div>
+      <div class="set-price" style="margin-right:10px">${price}€</div>
+      <div class="heart-btn" onclick="removeFav('${set.set_num}')" style="position:absolute;top:50%;right:14px;transform:translateY(-50%)">❤️</div>
     </div>
   `;
 }
