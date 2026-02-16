@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BrickAlert</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+:root {
+  --bg: #0C0C0C;
+  --card: #161616;
+  --border: #252525;
+  --yellow: #F5D400;
+  --red: #E3000B;
+  --muted: #555;
+  --text: #EEEBE0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.container {
+  width: 100%;
+  max-width: 430px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── PAGES ── */
+.pages { flex: 1; position: relative; }
+
+.page {
+  display: none;
+  padding-bottom: 90px;
+}
+.page.active { display: block; }
+
+/* ── SHARED ── */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 18px 18px;
+}
+
+.page-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.page-title span { color: var(--yellow); }
+
+.notif-btn {
+  width: 38px; height: 38px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+  cursor: pointer;
+  position: relative;
+}
+.badge {
+  position: absolute;
+  top: -4px; right: -4px;
+  width: 15px; height: 15px;
+  background: var(--red);
+  border-radius: 50%;
+  border: 2px solid var(--bg);
+  font-size: 8px;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+.section-label {
+  padding: 0 18px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+/* ── SET ROWS ── */
+.set-list {
+  padding: 0 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.set-row {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.set-row:active { opacity: 0.7; }
+
+.set-icon {
+  width: 48px; height: 48px;
+  border-radius: 12px;
+  background: #1c1c1c;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.set-info { flex: 1; min-width: 0; }
+
+.set-theme {
+  font-size: 10px;
+  color: var(--yellow);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 3px;
+}
+
+.set-name {
+  font-family: 'Syne', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 3px;
+}
+
+.set-date { font-size: 11px; color: var(--muted); }
+
+.set-price {
+  font-family: 'Syne', sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+/* ── HOME ── */
+.alert-strip {
+  margin: 0 18px 22px;
+  background: #0f1f14;
+  border: 1px solid #1e3d26;
+  border-radius: 14px;
+  padding: 13px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.alert-dot {
+  width: 8px; height: 8px;
+  background: #22c55e;
+  border-radius: 50%;
+  flex-shrink: 0;
+  animation: blink 2s infinite;
+}
+.alert-text { font-size: 13px; color: #86efac; }
+.alert-text strong { color: #fff; }
+
+.featured {
+  margin: 0 18px 22px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  overflow: hidden;
+  cursor: pointer;
+}
+.feat-img {
+  height: 130px;
+  background: linear-gradient(135deg, #111118, #1a1008);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 70px;
+  position: relative;
+}
+.new-tag {
+  position: absolute; top: 12px; left: 12px;
+  background: var(--red); color: #fff;
+  font-size: 10px; font-weight: 700;
+  padding: 3px 9px; border-radius: 20px;
+  letter-spacing: 0.08em; text-transform: uppercase;
+}
+.feat-body { padding: 14px 16px 16px; }
+.feat-theme {
+  font-size: 11px; color: var(--yellow);
+  font-weight: 700; letter-spacing: 0.06em;
+  text-transform: uppercase; margin-bottom: 4px;
+}
+.feat-name {
+  font-family: 'Syne', sans-serif;
+  font-size: 20px; font-weight: 800;
+  letter-spacing: -0.02em; margin-bottom: 10px;
+}
+.feat-footer { display: flex; justify-content: space-between; align-items: center; }
+.feat-meta { font-size: 12px; color: var(--muted); }
+.feat-price {
+  font-family: 'Syne', sans-serif;
+  font-size: 22px; font-weight: 800; color: var(--yellow);
+}
+
+/* ── EXPLORER ── */
+.search-box {
+  margin: 0 18px 18px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.search-box span { font-size: 16px; opacity: 0.4; }
+.search-box input {
+  flex: 1; background: none; border: none; outline: none;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px; color: var(--text);
+}
+.search-box input::placeholder { color: var(--muted); }
+
+.theme-grid {
+  padding: 0 18px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 22px;
+}
+.theme-card {
+  border-radius: 16px; padding: 16px 14px;
+  cursor: pointer; transition: opacity 0.15s;
+  display: flex; flex-direction: column; gap: 8px;
+  border: 1px solid var(--border);
+}
+.theme-card:active { opacity: 0.75; }
+.theme-emoji { font-size: 28px; }
+.theme-name { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 800; }
+.theme-count { font-size: 11px; color: var(--muted); }
+.tc-1 { background: #120a08; }
+.tc-2 { background: #080f18; }
+.tc-3 { background: #0a1210; }
+.tc-4 { background: #100d08; }
+.tc-5 { background: #0e0820; }
+.tc-6 { background: #100808; }
+
+/* ── FAVORIS ── */
+.fav-row {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 14px; padding: 14px;
+  display: flex; align-items: center; gap: 14px; cursor: pointer;
+  transition: opacity 0.15s;
+}
+.fav-row:active { opacity: 0.7; }
+.heart-btn { font-size: 18px; cursor: pointer; flex-shrink: 0; transition: transform 0.2s; }
+.heart-btn:active { transform: scale(1.3); }
+
+.empty-state {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 60px 40px; text-align: center; gap: 12px;
+}
+.empty-emoji { font-size: 44px; }
+.empty-title { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800; }
+.empty-sub { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+/* ── PROFIL ── */
+.profile-top {
+  display: flex; flex-direction: column; align-items: center;
+  padding: 30px 18px 24px; gap: 10px;
+}
+.avatar {
+  width: 68px; height: 68px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--red), #ff6b35);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 800;
+}
+.profile-name { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; }
+.profile-sub { font-size: 13px; color: var(--muted); }
+
+.stats-row {
+  display: flex; justify-content: space-around;
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 16px; padding: 16px; margin: 0 18px 22px;
+}
+.stat { text-align: center; }
+.stat-val { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; color: var(--yellow); }
+.stat-lbl { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+.menu-list { padding: 0 18px; display: flex; flex-direction: column; gap: 8px; }
+.menu-row {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 14px; padding: 15px 16px;
+  display: flex; align-items: center; gap: 12px; cursor: pointer;
+  transition: opacity 0.15s;
+}
+.menu-row:active { opacity: 0.7; }
+.menu-icon { font-size: 18px; width: 26px; text-align: center; }
+.menu-label { flex: 1; font-size: 14px; font-weight: 500; }
+.menu-arrow { color: var(--muted); font-size: 16px; }
+
+/* ── BOTTOM NAV ── */
+.nav {
+  position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 100%; max-width: 430px;
+  height: 72px;
+  background: rgba(12,12,12,0.97);
+  border-top: 1px solid var(--border);
+  display: flex; align-items: center;
+  backdrop-filter: blur(20px);
+  z-index: 100;
+}
+.nav-inner { display: flex; justify-content: space-around; width: 100%; }
+.nav-tab {
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  cursor: pointer; padding: 0 14px;
+}
+.nav-icon { font-size: 20px; }
+.nav-lbl { font-size: 10px; color: var(--muted); font-weight: 500; }
+.nav-tab.active .nav-lbl { color: var(--yellow); }
+
+/* ── ANIMATIONS ── */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="pages">
+
+    <!-- ACCUEIL -->
+    <div class="page active" id="page-home">
+      <div class="page-header">
+        <div class="page-title">Brick<span>Alert</span></div>
+        <div class="notif-btn">🔔<div class="badge">3</div></div>
+      </div>
+
+      <div class="alert-strip" id="alert-strip">
+        <div class="alert-dot"></div>
+        <div class="alert-text" id="alert-text"><strong>Chargement...</strong> Connexion à l'API Rebrickable</div>
+      </div>
+
+      <div class="section-label">⭐ À la une</div>
+      <div class="featured">
+        <div class="feat-img">🏙️<div class="new-tag">Nouveau</div></div>
+        <div class="feat-body">
+          <div class="feat-theme">Icons</div>
+          <div class="feat-name">New York Skyline</div>
+          <div class="feat-footer">
+            <div class="feat-meta">2 685 pcs · 1er mars</div>
+            <div class="feat-price">269€</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-label">📅 Prochaines sorties</div>
+      <div class="set-list" id="liste-home">
+        <div class="set-row">
+          <div class="set-icon">🚀</div>
+          <div class="set-info">
+            <div class="set-theme">Star Wars</div>
+            <div class="set-name">Razor Crest MK II</div>
+            <div class="set-date">15 mars · 3 187 pcs</div>
+          </div>
+          <div class="set-price">349€</div>
+        </div>
+        <div class="set-row">
+          <div class="set-icon">🏎️</div>
+          <div class="set-info">
+            <div class="set-theme">Technic</div>
+            <div class="set-name">Ferrari SF-24 F1</div>
+            <div class="set-date">17 mars · 4 021 pcs</div>
+          </div>
+          <div class="set-price">449€</div>
+        </div>
+        <div class="set-row">
+          <div class="set-icon">🦖</div>
+          <div class="set-info">
+            <div class="set-theme">Jurassic World</div>
+            <div class="set-name">T-Rex Breakout</div>
+            <div class="set-date">20 mars · 1 048 pcs</div>
+          </div>
+          <div class="set-price">119€</div>
+        </div>
+        <div class="set-row">
+          <div class="set-icon">🌿</div>
+          <div class="set-info">
+            <div class="set-theme">Botanical</div>
+            <div class="set-name">Orchid Greenhouse</div>
+            <div class="set-date">22 mars · 2 231 pcs</div>
+          </div>
+          <div class="set-price">199€</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EXPLORER -->
+    <div class="page" id="page-explorer">
+      <div class="page-header">
+        <div class="page-title">Explorer</div>
+      </div>
+
+      <div class="search-box">
+        <span>🔍</span>
+        <input type="text" placeholder="Rechercher un set, thème…">
+      </div>
+
+      <div class="section-label">🗂 Thèmes</div>
+      <div class="theme-grid">
+        <div class="theme-card tc-1"><div class="theme-emoji">⚡</div><div class="theme-name">Star Wars</div><div class="theme-count">42 sets</div></div>
+        <div class="theme-card tc-2"><div class="theme-emoji">🚀</div><div class="theme-name">Technic</div><div class="theme-count">28 sets</div></div>
+        <div class="theme-card tc-3"><div class="theme-emoji">🌿</div><div class="theme-name">Botanical</div><div class="theme-count">15 sets</div></div>
+        <div class="theme-card tc-4"><div class="theme-emoji">🏰</div><div class="theme-name">Icons</div><div class="theme-count">31 sets</div></div>
+        <div class="theme-card tc-5"><div class="theme-emoji">🌀</div><div class="theme-name">Ninjago</div><div class="theme-count">24 sets</div></div>
+        <div class="theme-card tc-6"><div class="theme-emoji">🦸</div><div class="theme-name">Marvel</div><div class="theme-count">19 sets</div></div>
+      </div>
+
+      <div class="section-label">🔥 Tendances</div>
+      <div class="set-list">
+        <div class="set-row">
+          <div class="set-icon">🏎️</div>
+          <div class="set-info">
+            <div class="set-theme">Technic</div>
+            <div class="set-name">Ferrari SF-24 F1</div>
+            <div class="set-date">17 mars · 4 021 pcs</div>
+          </div>
+          <div class="set-price">449€</div>
+        </div>
+        <div class="set-row">
+          <div class="set-icon">🏙️</div>
+          <div class="set-info">
+            <div class="set-theme">Icons</div>
+            <div class="set-name">New York Skyline</div>
+            <div class="set-date">1er mars · 2 685 pcs</div>
+          </div>
+          <div class="set-price">269€</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FAVORIS -->
+    <div class="page" id="page-favoris">
+      <div class="page-header">
+        <div class="page-title">Favoris</div>
+      </div>
+
+      <div class="section-label">❤️ Mes sets sauvegardés</div>
+      <div class="set-list" id="fav-list">
+        <div class="fav-row">
+          <div class="set-icon">🚀</div>
+          <div class="set-info">
+            <div class="set-theme">Star Wars</div>
+            <div class="set-name">Razor Crest MK II</div>
+            <div class="set-date">15 mars · 3 187 pcs</div>
+          </div>
+          <div class="set-price">349€</div>
+          <div class="heart-btn" onclick="removeFav(this)">❤️</div>
+        </div>
+        <div class="fav-row">
+          <div class="set-icon">🌿</div>
+          <div class="set-info">
+            <div class="set-theme">Botanical</div>
+            <div class="set-name">Orchid Greenhouse</div>
+            <div class="set-date">22 mars · 2 231 pcs</div>
+          </div>
+          <div class="set-price">199€</div>
+          <div class="heart-btn" onclick="removeFav(this)">❤️</div>
+        </div>
+      </div>
+
+      <div class="empty-state" id="fav-empty" style="display:none">
+        <div class="empty-emoji">🧱</div>
+        <div class="empty-title">Aucun favori</div>
+        <div class="empty-sub">Appuie sur ❤️ pour sauvegarder des sets</div>
+      </div>
+    </div>
+
+
+  </div>
+
+  <!-- NAV -->
+  <div class="nav">
+    <div class="nav-inner">
+      <div class="nav-tab active" data-page="home"><div class="nav-icon">🏠</div><div class="nav-lbl">Accueil</div></div>
+      <div class="nav-tab" data-page="explorer"><div class="nav-icon">🔍</div><div class="nav-lbl">Explorer</div></div>
+      <div class="nav-tab" data-page="favoris"><div class="nav-icon">❤️</div><div class="nav-lbl">Favoris</div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ========== API REBRICKABLE (TEMPS RÉEL) ==========
+// Détection automatique : local (localhost) ou production (Vercel)
+const IS_LOCAL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+const API_URL = IS_LOCAL
+  ? 'http://localhost:3000/api/sets'
+  : '/api/sets'; // URL relative pour Vercel
+
+// Données de secours si CORS bloque
+const FALLBACK_SETS = [
+  {"set_num":"30712-1","name":"Celebration Cake","year":2026,"theme_id":505,"theme_name":"Friends","num_parts":9,"set_img_url":"https://cdn.rebrickable.com/media/sets/30712-1/164265.jpg"},
+  {"set_num":"71512-1","name":"Crocodile Submarine","year":2026,"theme_id":749,"theme_name":"DREAMZzz","num_parts":1107,"set_img_url":"https://cdn.rebrickable.com/media/sets/71512-1/164799.jpg"},
+  {"set_num":"6614219-1","name":"Blooming Heart","year":2026,"theme_id":598,"theme_name":"Seasonal","num_parts":47,"set_img_url":"https://cdn.rebrickable.com/media/sets/6614219-1/168548.jpg"},
+  {"set_num":"21589-1","name":"Mini Biomes","year":2026,"theme_id":577,"theme_name":"Minecraft","num_parts":797,"set_img_url":"https://cdn.rebrickable.com/media/sets/21589-1/162550.jpg"},
+  {"set_num":"10473-1","name":"Fire Truck with Hose","year":2026,"theme_id":632,"theme_name":"DUPLO","num_parts":28,"set_img_url":"https://cdn.rebrickable.com/media/sets/10473-1/164109.jpg"},
+  {"set_num":"40878-1","name":"TMNT Figures","year":2026,"theme_id":610,"theme_name":"Collectible Minifigures","num_parts":0,"set_img_url":"https://cdn.rebrickable.com/media/sets/40878-1/167973.jpg"},
+  {"set_num":"40856-1","name":"Mandalorian & Grogu","year":2026,"theme_id":610,"theme_name":"Star Wars","num_parts":156,"set_img_url":"https://cdn.rebrickable.com/media/sets/40856-1/168485.jpg"},
+  {"set_num":"854327-1","name":"Simba Key Chain","year":2026,"theme_id":503,"theme_name":"Disney","num_parts":0,"set_img_url":"https://cdn.rebrickable.com/media/sets/854327-1/164268.jpg"},
+  {"set_num":"6581056-1","name":"Series 28 Box","year":2026,"theme_id":786,"theme_name":"Minifigures","num_parts":36,"set_img_url":"https://cdn.rebrickable.com/media/sets/6581056-1/163952.jpg"},
+  {"set_num":"6614213-1","name":"Bike Burger Cart","year":2026,"theme_id":52,"theme_name":"City","num_parts":41,"set_img_url":"https://cdn.rebrickable.com/media/sets/6614213-1/166965.jpg"}
+];
+
+// ========== FAVORITES MANAGEMENT ==========
+let favorites = JSON.parse(localStorage.getItem('brickAlertFavorites')) || [];
+
+function saveFavorites() {
+  localStorage.setItem('brickAlertFavorites', JSON.stringify(favorites));
+  updateFavoritesPage();
+  updateAllHeartButtons();
+}
+
+function toggleFavorite(setData) {
+  const index = favorites.findIndex(f => f.set_num === setData.set_num);
+  if (index > -1) {
+    favorites.splice(index, 1);
+  } else {
+    favorites.push(setData);
+  }
+  saveFavorites();
+}
+
+function updateAllHeartButtons() {
+  // Mettre à jour tous les boutons cœur sur la page
+  document.querySelectorAll('button[onclick*="toggleFavorite"]').forEach(btn => {
+    const onclickAttr = btn.getAttribute('onclick');
+    const match = onclickAttr.match(/set_num['":][\s]*['"]([^'"]+)['"]/);
+    if (match) {
+      const setNum = match[1];
+      btn.textContent = isFavorite(setNum) ? '❤️' : '🤍';
+    }
+  });
+}
+
+function isFavorite(setNum) {
+  return favorites.some(f => f.set_num === setNum);
+}
+
+// ========== EMOJI MAPPING ==========
+function getThemeEmoji(themeName) {
+  const lowerTheme = (themeName || '').toLowerCase();
+  if (lowerTheme.includes('star wars')) return '🚀';
+  if (lowerTheme.includes('technic')) return '🏎️';
+  if (lowerTheme.includes('city')) return '🏙️';
+  if (lowerTheme.includes('creator')) return '🌃';
+  if (lowerTheme.includes('icons')) return '🏯';
+  if (lowerTheme.includes('castle')) return '🏰';
+  if (lowerTheme.includes('ninjago')) return '🌀';
+  if (lowerTheme.includes('marvel') || lowerTheme.includes('super')) return '🦸';
+  if (lowerTheme.includes('jurassic') || lowerTheme.includes('dino')) return '🦖';
+  if (lowerTheme.includes('botanical') || lowerTheme.includes('plant')) return '🌿';
+  if (lowerTheme.includes('harry potter')) return '⚡';
+  return '🧱';
+}
+
+// ========== PRICE GENERATOR ==========
+function getRandomPrice(pieces) {
+  const pricePerPiece = 0.08 + Math.random() * 0.04;
+  return Math.round(pieces * pricePerPiece);
+}
+
+// ========== RENDER FUNCTIONS ==========
+function renderFeaturedCard(set) {
+  const price = getRandomPrice(set.num_parts);
+  const heartIcon = isFavorite(set.set_num) ? '❤️' : '🤍';
+  const imgUrl = set.set_img_url || '';
+
+  return `
+    <div class="feat-img" style="background-image:url('${imgUrl}');background-size:cover;background-position:center;">
+      <div class="new-tag">Nouveau</div>
+    </div>
+    <div class="feat-body">
+      <div class="feat-theme">${set.theme_name || 'LEGO'}</div>
+      <div class="feat-name">${set.name}</div>
+      <div class="feat-footer">
+        <div class="feat-meta">${set.num_parts} pcs · ${set.year || '2025'}</div>
+        <div class="feat-price">${price}€</div>
+      </div>
+      <button onclick='toggleFavorite(${JSON.stringify(set).replace(/'/g, "\\'")})'
+              style="position:absolute;top:14px;right:14px;background:rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.1);border-radius:50%;width:36px;height:36px;font-size:18px;cursor:pointer;backdrop-filter:blur(10px);transition:transform 0.2s">
+        ${heartIcon}
+      </button>
+    </div>
+  `;
+}
+
+function renderSetRow(set, index) {
+  const price = getRandomPrice(set.num_parts);
+  const dayOffset = 15 + index * 2;
+  const heartIcon = isFavorite(set.set_num) ? '❤️' : '🤍';
+  const imgUrl = set.set_img_url || '';
+
+  return `
+    <div class="set-row" style="position:relative">
+      <div class="set-icon" style="background-image:url('${imgUrl}');background-size:contain;background-repeat:no-repeat;background-position:center;"></div>
+      <div class="set-info">
+        <div class="set-theme">${set.theme_name || 'LEGO'}</div>
+        <div class="set-name">${set.name}</div>
+        <div class="set-date">${dayOffset} mars · ${set.num_parts} pcs</div>
+      </div>
+      <div class="set-price">${price}€</div>
+      <button onclick='toggleFavorite(${JSON.stringify(set).replace(/'/g, "\\'")})'
+              style="position:absolute;top:50%;right:60px;transform:translateY(-50%);background:rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.1);border-radius:50%;width:32px;height:32px;font-size:16px;cursor:pointer;backdrop-filter:blur(10px);transition:transform 0.2s">
+        ${heartIcon}
+      </button>
+    </div>
+  `;
+}
+
+function renderFavRow(set) {
+  const price = getRandomPrice(set.num_parts);
+  const imgUrl = set.set_img_url || '';
+
+  return `
+    <div class="fav-row" data-set-num="${set.set_num}">
+      <div class="set-icon" style="background-image:url('${imgUrl}');background-size:contain;background-repeat:no-repeat;background-position:center;"></div>
+      <div class="set-info">
+        <div class="set-theme">${set.theme_name || 'LEGO'}</div>
+        <div class="set-name">${set.name}</div>
+        <div class="set-date">${set.year || '2025'} · ${set.num_parts} pcs</div>
+      </div>
+      <div class="set-price">${price}€</div>
+      <div class="heart-btn" onclick="removeFav('${set.set_num}')">❤️</div>
+    </div>
+  `;
+}
+
+// ========== FETCH AND RENDER ==========
+async function fetchAndRenderSets() {
+  const alertText = document.getElementById('alert-text');
+
+  try {
+    // 🔥 CONNEXION TEMPS RÉEL À L'API REBRICKABLE
+    console.log('🚀 Connexion à Rebrickable API...');
+    const response = await fetch(API_URL);
+
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+    const data = await response.json();
+    const sets = data.results;
+
+    // ✅ SUCCÈS - Données live !
+    alertText.innerHTML = `<strong>✅ ${sets.length} sets chargés</strong> · Live API Rebrickable`;
+    console.log(`✅ ${sets.length} sets récupérés depuis l'API`);
+
+    renderSetsToPage(sets);
+
+  } catch (error) {
+    // ⚠️ ERREUR CORS/CONNEXION
+    console.error('❌ Erreur:', error);
+
+    if (IS_LOCAL) {
+      console.log('%c🚨 Serveur proxy non lancé !', 'color: #E3000B; font-size: 14px; font-weight: bold');
+      console.log('%c   Lance dans le terminal: npm run dev', 'color: #F5D400; font-size: 12px');
+      alertText.innerHTML = '<strong>🚨 Mode local</strong> · Lance : npm run dev';
+    } else {
+      console.log('%c⚠️ Erreur API Vercel', 'color: #E3000B; font-size: 14px; font-weight: bold');
+      alertText.innerHTML = '<strong>⚠️ Erreur serveur</strong> · Réessaye plus tard';
+    }
+
+    // Fallback sur données de secours
+    renderSetsToPage(FALLBACK_SETS);
+  }
+}
+
+function renderSetsToPage(sets) {
+  // Featured card (premier set)
+  const featuredContainer = document.querySelector('.featured');
+  featuredContainer.style.position = 'relative';
+  featuredContainer.innerHTML = renderFeaturedCard(sets[0]);
+
+  // Liste des prochaines sorties (sets 1-4)
+  const listeHome = document.getElementById('liste-home');
+  listeHome.innerHTML = sets.slice(1, 5).map((set, i) => renderSetRow(set, i)).join('');
+
+  // Page Explorer - tendances (sets 5-6)
+  const explorerList = document.querySelector('#page-explorer .set-list');
+  if (sets.length > 5) {
+    explorerList.innerHTML = sets.slice(5, 7).map((set, i) => renderSetRow(set, i)).join('');
+  }
+
+  // Charger les favoris
+  updateFavoritesPage();
+}
+
+// ========== FAVORITES PAGE ==========
+function updateFavoritesPage() {
+  const favList = document.getElementById('fav-list');
+  const favEmpty = document.getElementById('fav-empty');
+
+  if (favorites.length === 0) {
+    favList.innerHTML = '';
+    favEmpty.style.display = 'flex';
+  } else {
+    favEmpty.style.display = 'none';
+    favList.innerHTML = favorites.map(set => renderFavRow(set)).join('');
+  }
+}
+
+function removeFav(setNum) {
+  const index = favorites.findIndex(f => f.set_num === setNum);
+  if (index > -1) {
+    favorites.splice(index, 1);
+    saveFavorites();
+  }
+}
+
+// ========== NAVIGATION ==========
+document.querySelectorAll('.nav-tab').forEach(tab => {
+  tab.addEventListener('click', function() {
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    this.classList.add('active');
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-' + this.dataset.page).classList.add('active');
+    window.scrollTo(0, 0);
+  });
+});
+
+// ========== INIT ==========
+fetchAndRenderSets();
+</script>
+</body>
+</html>

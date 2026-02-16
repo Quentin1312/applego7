@@ -1,0 +1,12 @@
+{
+  "name": "brickalert",
+  "version": "1.0.0",
+  "description": "App de veille LEGO temps réel - API Rebrickable",
+  "main": "lego-app.html",
+  "scripts": {
+    "dev": "node proxy-server.js"
+  },
+  "keywords": ["lego", "rebrickable", "veille"],
+  "author": "",
+  "license": "MIT"
+}

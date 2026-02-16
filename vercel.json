@@ -1,0 +1,6 @@
+{
+  "rewrites": [
+    { "source": "/api/sets", "destination": "/api/sets.js" },
+    { "source": "/", "destination": "/index.html" }
+  ]
+}
